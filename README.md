@@ -22,6 +22,8 @@ Python and n8n engineer. I work on lead routing, document extraction, system-to-
 | Project | What it demonstrates |
 |---|---|
 | **[n8n-automation-workflows](https://github.com/charllysb/n8n-automation-workflows)** | Five production-shaped workflows — lead routing, invoice processing, content pipeline, support triage with SLA escalation, bidirectional sync with per-field conflict resolution |
+| **[ai-document-extractor](https://github.com/charllysb/ai-document-extractor)** | PDFs and scans to schema-validated JSON. Arithmetic and confidence gating, so a misread digit is held for review instead of silently becoming a row |
+| **[automation-dashboard](https://github.com/charllysb/automation-dashboard)** | Next.js observability panel — throughput, error rate against a budget, latency percentiles. Inline SVG charts, colorblind-validated palette in light and dark |
 
 **Systems engineering** — built in the trading domain, but the engineering is what integration work needs: unreliable third-party APIs, partial failure, credentials kept out of code, and honest measurement.
 

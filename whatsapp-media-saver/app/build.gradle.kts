@@ -1,23 +1,45 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
 
+// Release signing comes from keystore.properties (local, git-ignored) or from
+// environment variables (CI). Without either, only debug builds can be made.
+val keystoreProps = Properties().apply {
+    rootProject.file("keystore.properties").takeIf { it.exists() }?.inputStream()?.use(::load)
+}
+fun signingValue(prop: String, env: String): String? = keystoreProps.getProperty(prop) ?: System.getenv(env)
+
 android {
     namespace = "dev.charllys.zapsaver"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "dev.charllys.zapsaver"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+    }
+
+    signingConfigs {
+        val storeFilePath = signingValue("storeFile", "ZAPSAVER_KEYSTORE_PATH")
+        if (storeFilePath != null) {
+            create("release") {
+                storeFile = rootProject.file(storeFilePath)
+                storePassword = signingValue("storePassword", "ZAPSAVER_KEYSTORE_PASSWORD")
+                keyAlias = signingValue("keyAlias", "ZAPSAVER_KEY_ALIAS")
+                keyPassword = signingValue("keyPassword", "ZAPSAVER_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.findByName("release")
         }
     }
 

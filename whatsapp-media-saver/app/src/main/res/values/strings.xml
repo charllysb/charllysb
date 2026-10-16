@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Zap Saver</string>
+    <string name="share_save">Salvar em Downloads</string>
+    <string name="share_mp3">Salvar como MP3</string>
+
+    <string name="saving">Salvando em Downloads…</string>
+    <string name="converting">Convertendo para MP3…</string>
+    <string name="progress">Salvando %1$d de %2$d…</string>
+    <string name="saved_one">Salvo em Downloads: %1$s</string>
+    <string name="saved_many">%1$d arquivos salvos em Downloads</string>
+    <string name="saved_partial">%1$d salvos, %2$d falharam</string>
+    <string name="failed_all">Não consegui salvar. Tente de novo.</string>
+    <string name="nothing_shared">Nada para salvar.</string>
+    <string name="permission_denied">Sem permissão de armazenamento, não dá para salvar em Downloads.</string>
+
+    <string name="main_title">Como usar</string>
+    <string name="main_body">1. No WhatsApp, segure a mídia (foto, vídeo, áudio, documento).\n\n2. Toque em Compartilhar.\n\n3. Escolha uma das opções:\n\n• <b>Salvar em Downloads</b>: guarda o arquivo original.\n\n• <b>Salvar como MP3</b>: converte áudios (e o som de vídeos) para MP3.\n\nOs arquivos aparecem na pasta Download do celular.</string>
+</resources>

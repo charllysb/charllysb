@@ -59,6 +59,16 @@ class ShareActivity : ComponentActivity() {
             finish()
             return
         }
+        val entitlements = Entitlements(this)
+        val allowance = entitlements.allowance()
+        if (allowance == 0) {
+            startActivity(MainActivity.paywallIntent(this))
+            finish()
+            return
+        }
+        val batch = uris.take(allowance)
+        val skipped = uris.size - batch.size
+
         val toMp3 = intent.component?.className?.endsWith(".SaveAsMp3") == true
         val status = findViewById<TextView>(R.id.status)
         status.setText(if (toMp3) R.string.converting else R.string.saving)
@@ -66,8 +76,8 @@ class ShareActivity : ComponentActivity() {
         lifecycleScope.launch {
             val saved = mutableListOf<String>()
             var failed = 0
-            uris.forEachIndexed { i, uri ->
-                if (uris.size > 1) status.text = getString(R.string.progress, i + 1, uris.size)
+            batch.forEachIndexed { i, uri ->
+                if (batch.size > 1) status.text = getString(R.string.progress, i + 1, batch.size)
                 try {
                     saved += withContext(Dispatchers.IO) { saveOne(uri, toMp3) }
                 } catch (e: Exception) {
@@ -75,11 +85,17 @@ class ShareActivity : ComponentActivity() {
                     failed++
                 }
             }
-            val message = when {
+            entitlements.recordSaves(saved.size)
+
+            var message = when {
                 failed == 0 && saved.size == 1 -> getString(R.string.saved_one, saved.single())
                 failed == 0 -> getString(R.string.saved_many, saved.size)
                 saved.isEmpty() -> getString(R.string.failed_all)
                 else -> getString(R.string.saved_partial, saved.size, failed)
+            }
+            if (skipped > 0) {
+                message += "\n" + getString(R.string.skipped_limit, skipped)
+                startActivity(MainActivity.paywallIntent(this@ShareActivity))
             }
             Toast.makeText(this@ShareActivity, message, Toast.LENGTH_LONG).show()
             finish()

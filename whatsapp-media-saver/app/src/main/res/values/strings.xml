@@ -14,6 +14,20 @@
     <string name="nothing_shared">Nada para salvar.</string>
     <string name="permission_denied">Sem permissão de armazenamento, não dá para salvar em Downloads.</string>
 
+    <string name="skipped_limit">%1$d não foram salvos: limite grátis de hoje atingido.</string>
+
+    <string name="limit_reached">Você usou os salvamentos grátis de hoje. Amanhã tem mais, ou vire Pro e salve sem limite.</string>
+    <string name="plan_free">Plano grátis: %1$d de %2$d salvamentos restantes hoje</string>
+    <string name="plan_pro">Pro ativo: salvamentos ilimitados ✓</string>
+    <string name="pro_pitch">Pro: salve quanto quiser, para sempre. Pagamento único, sem assinatura.</string>
+    <string name="buy_pro">Virar Pro por %1$s</string>
+    <string name="pro_default_price">R$ 9,90</string>
+    <string name="restore">Já comprei: restaurar Pro</string>
+    <string name="restore_checking">Verificando suas compras…</string>
+    <string name="pro_thanks">Valeu! Pro ativado, agora é sem limite. 🎉</string>
+    <string name="purchase_pending">Pagamento em processamento. O Pro ativa assim que for confirmado.</string>
+    <string name="billing_unavailable">A compra não está disponível agora. Confira se o app foi instalado pela Play Store e tente de novo.</string>
+
     <string name="main_title">Como usar</string>
     <string name="main_body">1. No WhatsApp, segure a mídia (foto, vídeo, áudio, documento).\n\n2. Toque em Compartilhar.\n\n3. Escolha uma das opções:\n\n• <b>Salvar em Downloads</b>: guarda o arquivo original.\n\n• <b>Salvar como MP3</b>: converte áudios (e o som de vídeos) para MP3.\n\nOs arquivos aparecem na pasta Download do celular.</string>
 </resources>

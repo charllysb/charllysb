@@ -4,7 +4,8 @@
 
 - **Grátis:** 4 salvamentos por dia (MP3 incluso).
 - **Pro:** ilimitado para sempre, compra única de **R$ 9,90** (produto in-app no Play Console).
-- Contagem local no aparelho; compra verificada pela Play Billing. _A implementar._
+- Contagem local no aparelho; compra verificada pela Play Billing (`Billing.kt`).
+- O limite fica em `DailyQuota.FREE_DAILY_LIMIT`; o ID do produto em `Billing.PRO_PRODUCT_ID` (`zapsaver_pro`).
 
 ## 1. Criar a chave de upload (uma vez só)
 
@@ -47,7 +48,13 @@ A cada nova versão, aumente `versionCode` (e `versionName`) em `app/build.gradl
 2. **Conta pessoal nova:** antes de liberar em produção, o Google exige um **teste fechado com pelo menos 12 testadores por 14 dias seguidos**. Comece isso cedo (amigos e família servem).
 3. Criar app → nome, idioma padrão pt-BR, app gratuito.
 4. Subir o AAB numa trilha de teste e ativar o **Play App Signing**.
-5. Preencher: política de privacidade (URL pública do `PRIVACY.md`, ex.: link do GitHub), classificação de conteúdo, público-alvo, **Segurança dos dados: "não coleta nem compartilha dados"**, anúncios: não.
+5. **Produto Pro:** depois de subir o primeiro AAB (o Console só libera produtos para apps com a permissão de billing), vá em _Monetizar → Produtos → Produtos no app_ e crie:
+   - ID do produto: `zapsaver_pro` (tem que ser exatamente esse)
+   - Nome: Zap Saver Pro · Descrição: Salvamentos ilimitados para sempre
+   - Preço: R$ 9,90 → **Ativar**
+   - A compra só funciona no app instalado pela Play (trilha de teste). No APK do GitHub o botão avisa que não está disponível, e isso é esperado.
+   - Para testar sem pagar: _Configurações → Teste de licença_, adicione seu Gmail. Aparecem cartões de teste na hora de comprar.
+6. Preencher: política de privacidade (URL pública do `PRIVACY.md`, ex.: link do GitHub), classificação de conteúdo, público-alvo, **Segurança dos dados: "não coleta nem compartilha dados"**, anúncios: não.
 
 ## 4. Cuidado com a marca "WhatsApp"
 
@@ -77,7 +84,10 @@ A Play costuma recusar apps que usam marca de terceiros no nome ou no ícone. Po
 > • Converte mensagens de voz para MP3, que toca em qualquer lugar
 > • Extrai o áudio de vídeos em MP3
 > • Salva vários arquivos de uma vez
-> • Sem anúncios, sem cadastro e sem acesso à internet: nada sai do seu celular
+> • Sem anúncios, sem cadastro e sem acesso à internet: seus arquivos nunca saem do celular
+>
+> **Grátis e Pro**
+> Use de graça com 4 salvamentos por dia. Precisa de mais? O Pro libera salvamentos ilimitados para sempre, com pagamento único e sem assinatura.
 >
 > Funciona com qualquer app que permita compartilhar arquivos, incluindo apps de mensagens como o WhatsApp.
 >

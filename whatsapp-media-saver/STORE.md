@@ -1,5 +1,11 @@
 # Publicando na Google Play
 
+## Modelo de monetização (decidido)
+
+- **Grátis:** 4 salvamentos por dia (MP3 incluso).
+- **Pro:** ilimitado para sempre, compra única de **R$ 9,90** (produto in-app no Play Console).
+- Contagem local no aparelho; compra verificada pela Play Billing. _A implementar._
+
 ## 1. Criar a chave de upload (uma vez só)
 
 ```bash

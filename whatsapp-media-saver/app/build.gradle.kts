@@ -59,6 +59,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
     implementation("com.android.billingclient:billing-ktx:8.0.0")
+    // Billing pulls in an old Fragment transitively; ActivityResult APIs need 1.3+.
+    implementation("androidx.fragment:fragment-ktx:1.8.5")
     // Pure-Java LAME port; Android has no built-in MP3 encoder.
     implementation("de.sciss:jump3r:1.0.5")
 

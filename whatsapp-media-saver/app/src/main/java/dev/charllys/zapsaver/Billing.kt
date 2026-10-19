@@ -18,8 +18,8 @@ import com.android.billingclient.api.QueryPurchasesParams
  * Google Play Billing for the one-time "Pro" unlock.
  *
  * Only works in builds installed from Google Play (any test track). A sideloaded
- * APK can't reach the product, and [Listener.onBillingUnavailable] fires instead.
- * Callbacks arrive on the main thread.
+ * APK can't reach Play Billing, and [Listener.onBillingUnavailable] says why.
+ * [Listener] callbacks are always delivered on the main thread.
  */
 class Billing(
     private val activity: Activity,
@@ -31,7 +31,16 @@ class Billing(
         fun onProChanged(isPro: Boolean, justPurchased: Boolean)
         fun onPriceLoaded(formattedPrice: String)
         fun onPurchasePending()
-        fun onBillingUnavailable()
+        fun onBillingUnavailable(problem: Problem)
+    }
+
+    /** Why a purchase couldn't start; the codes help diagnose test-track setups. */
+    sealed interface Problem {
+        /** Couldn't talk to Play Billing at all (sideloaded build, Play Store outdated, offline). */
+        data class NotConnected(val code: Int) : Problem
+        /** Connected, but Play has no active product with [PRO_PRODUCT_ID] for this app yet. */
+        data object ProductNotFound : Problem
+        data class PurchaseFailed(val code: Int) : Problem
     }
 
     private val client = BillingClient.newBuilder(activity)
@@ -41,14 +50,15 @@ class Billing(
 
     private var product: ProductDetails? = null
 
-    fun connect() {
+    fun connect(onReady: (() -> Unit)? = null) {
         client.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(result: BillingResult) {
                 if (result.responseCode == BillingClient.BillingResponseCode.OK) {
                     refreshPurchases()
-                    loadProduct()
+                    loadProduct { onReady?.invoke() }
                 } else {
-                    Log.w(TAG, "Billing setup failed: ${result.debugMessage}")
+                    Log.w(TAG, "Billing setup failed: ${result.responseCode} ${result.debugMessage}")
+                    if (onReady != null) ui { listener.onBillingUnavailable(Problem.NotConnected(result.responseCode)) }
                 }
             }
 
@@ -69,12 +79,20 @@ class Billing(
         }
     }
 
+    /**
+     * Starts the purchase. Reconnects and re-queries the product first when needed,
+     * so a product activated in Play Console after the app opened still works.
+     */
     fun buyPro() {
-        val details = product
-        if (!client.isReady || details == null) {
-            listener.onBillingUnavailable()
-            return
+        when {
+            !client.isReady -> connect { launchPurchase() }
+            product == null -> loadProduct { launchPurchase() }
+            else -> launchPurchase()
         }
+    }
+
+    private fun launchPurchase() {
+        val details = product ?: return ui { listener.onBillingUnavailable(Problem.ProductNotFound) }
         val params = BillingFlowParams.newBuilder()
             .setProductDetailsParamsList(
                 listOf(BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(details).build())
@@ -90,12 +108,12 @@ class Billing(
             BillingClient.BillingResponseCode.USER_CANCELED -> Unit
             else -> {
                 Log.w(TAG, "Purchase failed: ${result.responseCode} ${result.debugMessage}")
-                listener.onBillingUnavailable()
+                ui { listener.onBillingUnavailable(Problem.PurchaseFailed(result.responseCode)) }
             }
         }
     }
 
-    private fun loadProduct() {
+    private fun loadProduct(onDone: () -> Unit = {}) {
         val params = QueryProductDetailsParams.newBuilder()
             .setProductList(
                 listOf(
@@ -107,9 +125,15 @@ class Billing(
             )
             .build()
         client.queryProductDetailsAsync(params) { result, details ->
-            if (result.responseCode != BillingClient.BillingResponseCode.OK) return@queryProductDetailsAsync
-            product = details.productDetailsList.firstOrNull()
-            product?.oneTimePurchaseOfferDetails?.formattedPrice?.let(listener::onPriceLoaded)
+            if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+                product = details.productDetailsList.firstOrNull()
+                product?.oneTimePurchaseOfferDetails?.formattedPrice?.let { ui { listener.onPriceLoaded(it) } }
+            } else {
+                Log.w(TAG, "Product query failed: ${result.responseCode} ${result.debugMessage}")
+            }
+            if (product == null) Log.w(TAG, "No active product '$PRO_PRODUCT_ID' returned by Play")
+            // Play delivers this on a background thread; hop back for UI callers.
+            ui(onDone)
         }
     }
 
@@ -129,20 +153,23 @@ class Billing(
             }
             val wasPro = entitlements.isPro
             entitlements.isPro = true
-            listener.onProChanged(isPro = true, justPurchased = !wasPro)
+            ui { listener.onProChanged(isPro = true, justPurchased = !wasPro) }
             return
         }
 
         if (pro.any { it.purchaseState == Purchase.PurchaseState.PENDING }) {
             // Pix/boleto can take a while; Pro unlocks on the refresh after it clears.
-            listener.onPurchasePending()
+            ui { listener.onPurchasePending() }
         }
         if (fromRefresh && entitlements.isPro) {
             // A full refresh that finds no purchase means it was refunded or revoked.
             entitlements.isPro = false
-            listener.onProChanged(isPro = false, justPurchased = false)
+            ui { listener.onProChanged(isPro = false, justPurchased = false) }
         }
     }
+
+    // Play Billing may answer on a background thread; the UI must only be touched on the main one.
+    private fun ui(block: () -> Unit) = activity.runOnUiThread(block)
 
     companion object {
         /** Must match the in-app product created in Play Console (Monetize → Products → In-app products). */

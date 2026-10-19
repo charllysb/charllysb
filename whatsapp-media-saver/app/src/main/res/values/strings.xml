@@ -26,7 +26,9 @@
     <string name="restore_checking">Verificando suas compras…</string>
     <string name="pro_thanks">Valeu! Pro ativado, agora é sem limite. 🎉</string>
     <string name="purchase_pending">Pagamento em processamento. O Pro ativa assim que for confirmado.</string>
-    <string name="billing_unavailable">A compra não está disponível agora. Confira se o app foi instalado pela Play Store e tente de novo.</string>
+    <string name="billing_not_connected">Não consegui falar com a Play Store (código %1$d). Confira se o app foi instalado pela Play e se a Play Store está atualizada.</string>
+    <string name="billing_product_missing">O Pro ainda não está disponível na loja. Tente de novo mais tarde.</string>
+    <string name="billing_failed">A compra não foi concluída (código %1$d). Tente de novo.</string>
 
     <string name="main_title">Como usar</string>
     <string name="main_body">1. No WhatsApp, segure a mídia (foto, vídeo, áudio, documento).\n\n2. Toque em Compartilhar.\n\n3. Escolha uma das opções:\n\n• <b>Salvar em Downloads</b>: guarda o arquivo original.\n\n• <b>Salvar como MP3</b>: converte áudios (e o som de vídeos) para MP3.\n\nOs arquivos aparecem na pasta Download do celular.</string>

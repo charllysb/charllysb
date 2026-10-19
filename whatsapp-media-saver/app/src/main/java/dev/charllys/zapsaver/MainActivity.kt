@@ -88,8 +88,13 @@ class MainActivity : ComponentActivity(), Billing.Listener {
         Toast.makeText(this, R.string.purchase_pending, Toast.LENGTH_LONG).show()
     }
 
-    override fun onBillingUnavailable() {
-        Toast.makeText(this, R.string.billing_unavailable, Toast.LENGTH_LONG).show()
+    override fun onBillingUnavailable(problem: Billing.Problem) {
+        val message = when (problem) {
+            is Billing.Problem.NotConnected -> getString(R.string.billing_not_connected, problem.code)
+            Billing.Problem.ProductNotFound -> getString(R.string.billing_product_missing)
+            is Billing.Problem.PurchaseFailed -> getString(R.string.billing_failed, problem.code)
+        }
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
     companion object {

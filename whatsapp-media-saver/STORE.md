@@ -95,4 +95,4 @@ A Play costuma recusar apps que usam marca de terceiros no nome ou no ícone. Po
 
 **Categoria:** Ferramentas
 
-**Imagens necessárias:** ícone 512×512, imagem de destaque 1024×500 e pelo menos 2 capturas de tela do celular.
+**Imagens necessárias:** ícone 512×512 (`store/icon-512.png`, gerado por `store/make_icon.py`), imagem de destaque 1024×500 e pelo menos 2 capturas de tela do celular.
